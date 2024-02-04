@@ -1,0 +1,30 @@
+<button class="wishlist-trigger">
+  {% render 'icon-magic', height: 30, width: 30, fill: "#fff" %}
+</button>
+
+{% schema %}
+{
+  "name": "Wishlist",
+  "target": "body",
+  "javascript": "app-embed.js",
+  "stylesheets": "app-embed.css",
+  "settings": [
+    {
+      "type": "select",
+      "id": "widget_behavior",
+      "label": "Behavior",
+      "options": [
+        {
+          "value": "modal",
+          "label": "Modal"
+        },
+        {
+          "value": "drawer",
+          "label": "Drawer"
+        }
+      ],
+      "default": "modal"
+    }
+  ]
+}
+{% endschema %}
