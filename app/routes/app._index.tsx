@@ -61,7 +61,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const productsResponse = await productsRequest.json();
     const pagination: PageInfo = productsResponse.data.products.pageInfo;
     const products: NonNullable<GetProductByIdQuery["product"]>[] =
-      productsResponse.data.products.edges.map((edge: any) => edge.node);
+      productsResponse.data.products.edges.map((edge: any) => {
+        return {
+          ...edge.node,
+          wishlistCount: edge.node.wishlistCount
+            ? edge.node.wishlistCount
+            : {
+                value: 0,
+              },
+        };
+      });
 
     // Metafields
     const metafieldDefinitionQueries = Promise.all([
@@ -278,6 +287,9 @@ export default function Index() {
               {
                 title: "Status",
               },
+              {
+                title: "Wishlist Count",
+              },
             ]}
             pagination={{
               hasNext: pagination?.hasNextPage,
@@ -287,27 +299,32 @@ export default function Index() {
                 navigatePage(pagination?.startCursor as string, false),
             }}
           >
-            {products.map(({ id, title, status, handle }, index) => {
-              const formattedStatus =
-                status.charAt(0) + status.slice(1).toLowerCase();
+            {products.map(
+              ({ id, title, status, handle, wishlistCount }, index) => {
+                const formattedStatus =
+                  status.charAt(0) + status.slice(1).toLowerCase();
 
-              return (
-                <IndexTable.Row id={id} key={id} position={index}>
-                  <IndexTable.Cell>
-                    <Link dataPrimaryLink url={handle}>
-                      <Text fontWeight="bold" as="span">
-                        {title}
-                      </Text>
-                    </Link>
-                  </IndexTable.Cell>
-                  <IndexTable.Cell>
-                    <Badge tone={STATUS_MAP[status as Status]}>
-                      {formattedStatus}
-                    </Badge>
-                  </IndexTable.Cell>
-                </IndexTable.Row>
-              );
-            })}
+                return (
+                  <IndexTable.Row id={id} key={id} position={index}>
+                    <IndexTable.Cell>
+                      <Link dataPrimaryLink url={handle}>
+                        <Text fontWeight="bold" as="span">
+                          {title}
+                        </Text>
+                      </Link>
+                    </IndexTable.Cell>
+                    <IndexTable.Cell>
+                      <Badge tone={STATUS_MAP[status as Status]}>
+                        {formattedStatus}
+                      </Badge>
+                    </IndexTable.Cell>
+                    <IndexTable.Cell>
+                      <Text as="span">{wishlistCount.value}</Text>
+                    </IndexTable.Cell>
+                  </IndexTable.Row>
+                );
+              },
+            )}
           </IndexTable>
         </Card>
       </BlockStack>

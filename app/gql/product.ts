@@ -32,6 +32,9 @@ export const FORWARD_PAGINATION_QUERY = `#graphql
           title
           status
           handle
+          wishlistCount: metafield(namespace: "wishlist", key: "count") {
+            value
+          }
         }
       },
       pageInfo {
@@ -53,6 +56,9 @@ export const BACKWARD_PAGINATION_QUERY = `#graphql
           title
           status
           handle
+          wishlistCount: metafield(namespace: "wishlist", key: "count") {
+            value
+          }
         }
       },
       pageInfo {
